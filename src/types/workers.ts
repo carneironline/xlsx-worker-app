@@ -64,11 +64,22 @@ export interface WorkerXlsxResponse {
         items: Array<{
             id: string;
             status: string;
+            error?: string;
         }>;
+        errors?: Array<{
+            id: string;
+            status: string;
+            error: string;
+        }>;
+    };
+    errors?: {
+        count: number;
+        success: number;
     };
     executionTime?: {
         milliseconds: number;
         seconds: number;
     };
     completed?: boolean;
+    hasErrors?: boolean;
 }

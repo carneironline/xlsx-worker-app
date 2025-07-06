@@ -18,7 +18,9 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
         show: false,
         totalDemands: 0,
         progress: undefined,
+        errors: undefined,
         executionTime: undefined,
+        hasErrors: false,
     });
 
     return <AlertContext.Provider value={{ alertConfig, setAlertConfig }}>{children}</AlertContext.Provider>;

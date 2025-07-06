@@ -20,10 +20,15 @@ export interface AlertProps {
         total: number;
         percentage: number;
     };
+    errors?: {
+        count: number;
+        success: number;
+    };
     executionTime?: {
         milliseconds: number;
         seconds: number;
     };
+    hasErrors?: boolean;
 }
 
 export function AlertComponent({ className }: AlertProps) {
@@ -34,7 +39,9 @@ export function AlertComponent({ className }: AlertProps) {
     const description = alertConfig.description;
     const totalDemands = alertConfig.totalDemands || 0;
     const progress = alertConfig.progress;
+    const errors = alertConfig.errors;
     const executionTime = alertConfig.executionTime;
+    const hasErrors = alertConfig.hasErrors;
 
     function handleClose() {
         setAlertConfig((state) => ({
@@ -46,7 +53,7 @@ export function AlertComponent({ className }: AlertProps) {
     return (
         <Alert
             className={cn(
-                'fixed left-1/2 md:left-[unset] transform md:transform-[unset] -translate-x-1/2 md:-translate-x-[unset] bottom-5 md:bottom-10 md:right-10 w-[360px]',
+                'fixed left-1/2 md:left-[unset] transform md:transform-[unset] -translate-x-1/2 md:-translate-x-[unset] bottom-5 md:bottom-10 md:right-10 w-[380px]',
                 className,
                 show ? 'animate-slide-in' : 'hidden'
             )}
@@ -71,15 +78,40 @@ export function AlertComponent({ className }: AlertProps) {
                             ></div>
                         </div>
                         <p className='text-xs mt-1 text-gray-600'>
-                            {progress.current} de {progress.total} demandas enviadas
+                            {progress.current} de {progress.total} demandas processadas
                         </p>
+
+                        {errors && (errors.success > 0 || errors.count > 0) && (
+                            <div className='flex justify-between text-xs mt-2 pt-2 border-t border-gray-200'>
+                                <span className='text-green-600 flex items-center'>
+                                    <span className='w-2 h-2 bg-green-500 rounded-full mr-1'></span>
+                                    Sucesso: {errors.success}
+                                </span>
+                                {errors.count > 0 && (
+                                    <span className='text-red-600 flex items-center'>
+                                        <span className='w-2 h-2 bg-red-500 rounded-full mr-1'></span>
+                                        Erros: {errors.count}
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {totalDemands > 0 && !progress && (
-                    <p className='mt-4 text-sm '>
-                        <b>Total de demandas processadas:</b> {totalDemands}
-                    </p>
+                    <div className='mt-4'>
+                        <p className='text-sm'>
+                            <b>Total de demandas processadas:</b> {totalDemands}
+                        </p>
+                        {errors && (errors.success > 0 || errors.count > 0) && (
+                            <div className='flex justify-between text-sm mt-2 pt-2 border-t border-gray-200'>
+                                <span className='text-green-600'>✅ Sucesso: {errors.success}</span>
+                                {errors.count > 0 && (
+                                    <span className='text-red-600'>❌ Erros: {errors.count}</span>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 {executionTime && (

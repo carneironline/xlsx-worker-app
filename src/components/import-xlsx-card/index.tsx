@@ -51,8 +51,10 @@ export function ImportXlsxCard() {
                     show: true,
                     totalDemands: data.totalDemands,
                     progress: data.progress,
+                    errors: data.errors,
                     executionTime: data.executionTime,
-                    type: data.completed ? 'success' : 'info',
+                    hasErrors: data.hasErrors,
+                    type: data.completed ? (data.hasErrors ? 'error' : 'success') : 'info',
                 }));
             }
 
