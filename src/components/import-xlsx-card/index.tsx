@@ -50,14 +50,19 @@ export function ImportXlsxCard() {
                     description: data.message,
                     show: true,
                     totalDemands: data.totalDemands,
+                    progress: data.progress,
+                    executionTime: data.executionTime,
+                    type: data.completed ? 'success' : 'info',
                 }));
             }
 
-            if (data.totalDemands) {
+            if (data.totalDemands && data.completed) {
                 console.log('worker data:', data);
             }
 
-            clearFile();
+            if (data.completed) {
+                clearFile();
+            }
 
             // setAlertConfig((state) => ({
             //         ...state,

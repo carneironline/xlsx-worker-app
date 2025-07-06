@@ -54,4 +54,21 @@ export interface WorkerXlsxResponse {
     totalDemands?: number;
     time?: string;
     data?: IDemand[];
+    progress?: {
+        current: number;
+        total: number;
+        percentage: number;
+    };
+    batch?: {
+        size: number;
+        items: Array<{
+            id: string;
+            status: string;
+        }>;
+    };
+    executionTime?: {
+        milliseconds: number;
+        seconds: number;
+    };
+    completed?: boolean;
 }
