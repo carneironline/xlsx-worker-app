@@ -36,6 +36,7 @@ self.onmessage = async (event) => {
     const tempoSegundos = tempoMs / 1000;
 
     console.log(`Tempo de execução: ${tempoSegundos.toFixed(2)} s`);
+    console.log('Demandas não processadas:', processResult.demandsDataWithError);
 
     // Mensagem final detalhada com todas as estatísticas em linhas separadas
     const finalDetailedMessage = `Processamento finalizado!
@@ -89,6 +90,7 @@ async function processarComDelay({ data, delayTimeMs = 50 }) {
 async function simulateApiRequest(data) {
     const totalDemands = data.length;
     let demandsSent = 0;
+    let demandsDataWithError = [];
     let demandsWithError = 0;
     let demandsSuccess = 0;
 
@@ -124,6 +126,7 @@ async function simulateApiRequest(data) {
 
             if (hasError) {
                 demandsWithError++;
+                demandsDataWithError.push(item);
                 return {
                     id: itemId,
                     status: 'erro',
@@ -174,6 +177,7 @@ async function simulateApiRequest(data) {
         totalDemands,
         demandsSuccess,
         demandsWithError,
+        demandsDataWithError,
         hasErrors: demandsWithError > 0,
         successRate: ((demandsSuccess / totalDemands) * 100).toFixed(1),
     };
