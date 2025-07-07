@@ -41,7 +41,6 @@ export function AlertComponent({ className }: AlertProps) {
     const progress = alertConfig.progress;
     const errors = alertConfig.errors;
     const executionTime = alertConfig.executionTime;
-    const hasErrors = alertConfig.hasErrors;
 
     function handleClose() {
         setAlertConfig((state) => ({
