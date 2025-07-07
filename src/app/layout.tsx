@@ -32,7 +32,7 @@ export default function RootLayout({
                     <div className='grid grid-rows-[80px_1fr] md:grid-rows-[200px_1fr] grid-cols-1 h-screen justify-center items-center'>
                         <NavigationMainMenu />
 
-                        <main className='self-start flex flex-col md:flex-row justify-center items-stretch gap-6 md:w-[1200px] mt-4 md:mt-10 mx-auto'>
+                        <main className='self-start flex flex-col md:flex-row justify-center items-stretch gap-6 md:w-[1200px] mt-4 md:mt-10 mx-auto p-4 pt-0'>
                             {children}
                         </main>
                     </div>
