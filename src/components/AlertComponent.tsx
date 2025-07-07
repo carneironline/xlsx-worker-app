@@ -63,7 +63,7 @@ export function AlertComponent({ className }: AlertProps) {
             {type === 'info' && <Info />}
             <AlertTitle>{title}</AlertTitle>
             <AlertDescription>
-                {description}
+                <div className='whitespace-pre-line'>{description}</div>
 
                 {progress && (
                     <div className='mt-3'>
