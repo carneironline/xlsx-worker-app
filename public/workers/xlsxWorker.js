@@ -29,7 +29,7 @@ self.onmessage = async (event) => {
     await delay(3000);
 
     // Simulação de envio das demandas ao backend
-    const processResult = await simularEnvioBackend(data);
+    const processResult = await simulateApiRequest(data);
 
     const fim = performance.now();
     const tempoMs = fim - inicio;
@@ -86,7 +86,7 @@ async function processarComDelay({ data, delayTimeMs = 50 }) {
     }
 }
 
-async function simularEnvioBackend(data) {
+async function simulateApiRequest(data) {
     const totalDemands = data.length;
     let demandsSent = 0;
     let demandsWithError = 0;
