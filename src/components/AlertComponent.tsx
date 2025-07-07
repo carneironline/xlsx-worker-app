@@ -52,7 +52,7 @@ export function AlertComponent({ className }: AlertProps) {
     return (
         <Alert
             className={cn(
-                'fixed left-1/2 md:left-[unset] transform md:transform-[unset] -translate-x-1/2 md:-translate-x-[unset] bottom-5 md:bottom-10 md:right-10 w-[380px]',
+                'fixed left-1/2 md:left-[unset] transform md:transform-[unset] -translate-x-1/2 md:-translate-x-[unset] bottom-5 md:bottom-10 md:right-10 w-[360px] md:w-[380px]',
                 className,
                 show ? 'animate-slide-in' : 'hidden'
             )}
