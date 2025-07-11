@@ -1,5 +1,6 @@
 importScripts('https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/shim.min.js');
 importScripts('https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js');
+importScripts('DemandGroupingFactory.js');
 
 self.onmessage = async (event) => {
     self.postMessage({
@@ -7,10 +8,7 @@ self.onmessage = async (event) => {
         message: 'Iniciando o processamento do arquivo',
     });
 
-    await delay(2000);
-
-    console.log('Iniciando medição de tempo de execução');
-    const inicio = performance.now();
+    await delay(1000);
 
     const fileBuffer = event.data;
     const workbook = XLSX.read(fileBuffer, { type: 'array' });
@@ -19,17 +17,31 @@ self.onmessage = async (event) => {
 
     console.log('workbook:', workbook);
 
-    self.postMessage({
-        alert: true,
-        message: 'Processando os dados do arquivo',
-    });
     const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     const data = jsonData.map((item) => item);
+    const demands = DemandGroupingFactory.groupPedidosByDemanda(data);
+    console.log(demands);
 
-    await delay(3000);
+    self.postMessage({
+        alert: true,
+        message: `Iniciando envio de ${demands.length} demandas`,
+        progress: {
+            current: 0,
+            total: demands.length,
+            percentage: 0,
+        },
+        errors: {
+            count: 0,
+            success: 0,
+        },
+    });
 
-    // Simulação de envio das demandas ao backend
-    const processResult = await simulateApiRequest(data);
+    await delay(2000);
+
+    console.log('Iniciando medição de tempo de execução');
+    const inicio = performance.now();
+
+    const processResult = await simulateApiRequest(demands);
 
     const fim = performance.now();
     const tempoMs = fim - inicio;
@@ -38,21 +50,18 @@ self.onmessage = async (event) => {
     console.log(`Tempo de execução: ${tempoSegundos.toFixed(2)} s`);
     console.log('Demandas não processadas:', processResult.demandsDataWithError);
 
-    // Mensagem final detalhada com todas as estatísticas em linhas separadas
-    const finalDetailedMessage = `Processamento finalizado!
-📊 Total processado: ${processResult.totalDemands}
-✅ Sucesso: ${processResult.demandsSuccess}
-❌ Erros: ${processResult.demandsWithError}
-📈 Taxa de sucesso: ${processResult.successRate}%
-⏱️ Tempo total: ${tempoSegundos.toFixed(2)}s`;
-
     self.postMessage({
         alert: true,
-        message: finalDetailedMessage,
-        totalDemands: data.length,
+        message: 'Processamento finalizado!',
+        totalDemands: demands.length,
         time: new Date().toISOString(),
-        data: data,
+        data: {
+            all: demands,
+            success: processResult.demandsDataWithSuccess,
+            errors: processResult.demandsDataWithError,
+        },
         completed: true,
+        processResult,
         hasErrors: processResult.hasErrors,
         errors: {
             count: processResult.demandsWithError,
@@ -91,22 +100,9 @@ async function simulateApiRequest(data) {
     const totalDemands = data.length;
     let demandsSent = 0;
     let demandsDataWithError = [];
+    let demandsDataWithSuccess = [];
     let demandsWithError = 0;
     let demandsSuccess = 0;
-
-    self.postMessage({
-        alert: true,
-        message: `Iniciando envio de ${totalDemands} demandas`,
-        progress: {
-            current: 0,
-            total: totalDemands,
-            percentage: 0,
-        },
-        errors: {
-            count: 0,
-            success: 0,
-        },
-    });
 
     // Simular envio em lotes menores para melhor visualização do progresso
     const batchSize = Math.max(1, Math.ceil(totalDemands / 20)); // Máximo 20 atualizações de progresso
@@ -121,7 +117,7 @@ async function simulateApiRequest(data) {
 
         // Simular erros aleatórios (5-15% de chance de erro por item)
         const batchResults = batch.map((item, index) => {
-            const hasError = Math.random() < 0.1; // 10% de chance de erro
+            const hasError = Math.random() < 0.9; // 10% de chance de erro
             const itemId = item.id || item['ID da demanda'] || `item-${i + index + 1}`;
 
             if (hasError) {
@@ -134,6 +130,8 @@ async function simulateApiRequest(data) {
                 };
             } else {
                 demandsSuccess++;
+                demandsDataWithSuccess.push(item);
+
                 return {
                     id: itemId,
                     status: 'enviado',
@@ -176,6 +174,7 @@ async function simulateApiRequest(data) {
     return {
         totalDemands,
         demandsSuccess,
+        demandsDataWithSuccess,
         demandsWithError,
         demandsDataWithError,
         hasErrors: demandsWithError > 0,

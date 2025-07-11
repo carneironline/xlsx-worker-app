@@ -48,8 +48,10 @@ export function ImportXlsxCard() {
                 setAlertConfig((state) => ({
                     ...state,
                     description: data.message,
+                    processResult: data.processResult,
                     show: true,
                     totalDemands: data.totalDemands,
+                    completed: data.completed,
                     progress: data.progress,
                     errors: data.errors,
                     executionTime: data.executionTime,

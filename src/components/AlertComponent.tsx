@@ -29,6 +29,15 @@ export interface AlertProps {
         seconds: number;
     };
     hasErrors?: boolean;
+    completed?: boolean;
+    processResult?: {
+        totalDemands: number;
+        demandsSuccess: number;
+        demandsWithError: number;
+        successRate: number;
+        hasErrors: boolean;
+    };
+    tempoSegundos?: number;
 }
 
 export function AlertComponent({ className }: AlertProps) {
@@ -41,6 +50,9 @@ export function AlertComponent({ className }: AlertProps) {
     const progress = alertConfig.progress;
     const errors = alertConfig.errors;
     const executionTime = alertConfig.executionTime;
+    const completed = alertConfig.completed;
+    const processResult = alertConfig.processResult;
+    const tempoSegundos = alertConfig.tempoSegundos || 0;
 
     function handleClose() {
         setAlertConfig((state) => ({
@@ -63,6 +75,18 @@ export function AlertComponent({ className }: AlertProps) {
             <AlertTitle>{title}</AlertTitle>
             <AlertDescription>
                 <div className='whitespace-pre-line'>{description}</div>
+
+                {completed && (
+                    <div className='mt-3'>
+                        <ul>
+                            <li>📊 Total de demandas processadas: {processResult?.totalDemands}</li>
+                            <li>✅ Sucesso: {processResult?.demandsSuccess}</li>
+                            <li>❌ Erros: {processResult?.demandsWithError}</li>
+                            <li>📈 Taxa de sucesso: {processResult?.successRate}%</li>
+                        </ul>
+                        <p>⏱️ Tempo total: {tempoSegundos.toFixed(2) ?? '0.00'}s</p>
+                    </div>
+                )}
 
                 {progress && (
                     <div className='mt-3'>

@@ -82,4 +82,11 @@ export interface WorkerXlsxResponse {
     };
     completed?: boolean;
     hasErrors?: boolean;
+    processResult?: {
+        totalDemands: number;
+        demandsSuccess: number;
+        demandsWithError: number;
+        successRate: number;
+        hasErrors: boolean;
+    };
 }
